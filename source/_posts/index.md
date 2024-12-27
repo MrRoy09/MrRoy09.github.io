@@ -200,7 +200,7 @@ A VEH was setup to handle `Exception_Illegal_Instruction` and deobfuscate the sh
   return EXCEPTION_CONTINUE_SEARCH;
 ```
 
-Note how during the handling of this `EXCEPTION_ILLEGAL_INSTRUCTION`, we also raise `Exception_ACCESS_VIOLATION in order to make the syscalls required to read and write virtual memory and deobfuscate shellcode.
+Note how during the handling of this `EXCEPTION_ILLEGAL_INSTRUCTION`, we also raise `Exception_ACCESS_VIOLATION` in order to make the syscalls required to read and write virtual memory and deobfuscate shellcode.
 
 # Conclusion
 
