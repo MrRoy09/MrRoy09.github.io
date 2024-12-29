@@ -111,7 +111,7 @@ Now if one calls the `pNtWriteVirtualMemory` function, it will raise `EXCEPTION_
 
 As can be seen in the aforementioned analysis of GuLoader, the shellcode was observed to be using VEH to obfuscate control flow. It did so by raising various kinds of exceptions and then handling them using VEH to alter the control flow. I decided to implement this in my program by using Syscalls (using the technique mentioned above) to load an obfuscated shellcode.
 
-The shellcode was designed to load all the required modules using PEB traversal and open a socket connection on `localhost:8100`. The server would receive a message, encrypt it and reflect it back to the sender. The aim of the CTF Challenge was to reverse this encryption algo and retrieve the value of the flag.
+The shellcode was designed to load all the required modules using PEB traversal and open a socket connection on `localhost:8120`. The server would receive a message, encrypt it and reflect it back to the sender. The aim of the CTF Challenge was to reverse this encryption algo and retrieve the value of the flag.
 
 The shellcode was obfuscated as follows-
 
