@@ -80,7 +80,7 @@ Another interesting point to note is that in the Call Stack of the application, 
 
 Syscall numbers change between Windows versions. Hence we need to dynamically retrieve syscall numbers for the functions we are interested in. What better way to do this than use a PE Parser to parse through the Ntdll.dll file on disk and retrieve the syscall number. Since we are parsing the Ntdll.dll file on disk (and not in memory), we don't have to worry about Ntdll functions being hooked by EDR
 
-I decided to write my own parser to get the job done. I will describe the procedure in brief and you can find the code for this on my Github repo for this Project.
+I decided to write my own parser to get the job done ([Github - Basic PE Parser](https://github.com/MrRoy09/PE_Parser)). I will describe the procedure in brief and you can find the code for this on my Github repo for this Project [(Project Repo)](https://github.com/MrRoy09/VEH_Control_Flow).
 
 - Open the Ntdll.dll File and parse through the headers. Specifically we are interested in the `OptionalHeader` which contains the Address of DataDirectories one of which is the `ExportDirectory` . The `ExportDirectory` contains a list of all the functions exported by the dll.
 - Parse through each function in the ExportDirectory and compare the function name with the required function name. Obtain the address for the code for the Desired function
@@ -88,7 +88,7 @@ I decided to write my own parser to get the job done. I will describe the proced
 
 The process is a bit more naunced and I encourage you to read more about the PE and COFF file format. (PS: It is a good learning experience writing your own PE parser)
 
-Retrieving the address of an syscall instruction is trivial. We can use the offset (in bytes) of any syscall instruction we find within the Ntdll file and convert it to RVA (Relative Virtual Address refers to the address relative to base address of the module when it loaded in memory) of the instruction. Then we can add it to the base address of the Ntdll module loaded. Once the syscall numbers and syscall instruction address are retrieved, we initialize function pointers to point to syscall numbers as follows.
+Retrieving the address of a syscall instruction is trivial. We can use the offset (in bytes) of any syscall instruction we find within the Ntdll file and convert it to RVA (Relative Virtual Address refers to the address relative to base address of the module when it loaded in memory) of the instruction. Then we can add it to the base address of the Ntdll module loaded. Once the syscall numbers and syscall instruction address are retrieved, we initialize function pointers to point to syscall numbers as follows.
 
 ```c++
 typedef NTSYSAPI NTSTATUS(NTAPI* _NtWriteVirtualMemory)(
@@ -103,13 +103,16 @@ INT16 SysNtWriteVirtualMem = syscall_num(4121089429, parser, fileData);
 pNtWriteVirtualMemory = (_NtWriteVirtualMemory)SysNtWriteVirtualMem;
 ```
 
-where syscall_num is the function responsible for retrieving syscall number and 4121089429 is simply the hash (custom hash algo) of `NtWriteVirtualMemory`. I used function name hashing to make the process more discreet
+where syscall_num is the function responsible for retrieving syscall number and 4121089429 is simply the hash (custom hash algo) of `NtWriteVirtualMemory`. I used function name hashing to make the process more discreet. The parser also computes hashes of each function in the export directory and compares it with the provided hash. This way
+we don't have to use any strings to get the required functions.
 
 Now if one calls the `pNtWriteVirtualMemory` function, it will raise `EXCEPTION_ACCESS_VIOLATION` (`RIP` points to `INT16 SysNtWriteVirtualMem` which will moved into RAX by the VEH) which will be handled by the VEH we have registered and the syscall will be made!
 
 # Obfuscating Shellcode Control Flow Using VEH
 
 As can be seen in the aforementioned analysis of GuLoader, the shellcode was observed to be using VEH to obfuscate control flow. It did so by raising various kinds of exceptions and then handling them using VEH to alter the control flow. I decided to implement this in my program by using Syscalls (using the technique mentioned above) to load an obfuscated shellcode.
+
+The shellcode was designed to load all the required modules using PEB traversal and open a socket connection on `localhost:8100`. The server would receive a message, encrypt it and reflect it back to the sender. The aim of the CTF Challenge was to reverse this encryption algo and retrieve the value of the flag.
 
 The shellcode was obfuscated as follows-
 
