@@ -103,8 +103,7 @@ INT16 SysNtWriteVirtualMem = syscall_num(4121089429, parser, fileData);
 pNtWriteVirtualMemory = (_NtWriteVirtualMemory)SysNtWriteVirtualMem;
 ```
 
-where syscall_num is the function responsible for retrieving syscall number and 4121089429 is simply the hash (custom hash algo) of `NtWriteVirtualMemory`. I used function name hashing to make the process more discreet. The parser also computes hashes of each function in the export directory and compares it with the provided hash. This way
-we don't have to use any strings to get the required functions.
+where syscall_num is the function responsible for retrieving syscall number and 4121089429 is simply the hash (custom hash algo) of `NtWriteVirtualMemory`. I used function name hashing to make the process more discreet. The parser also computes the hash of each function in the export directory and compares it with the provided hash. This way we don't have to use any strings to get the required functions.
 
 Now if one calls the `pNtWriteVirtualMemory` function, it will raise `EXCEPTION_ACCESS_VIOLATION` (`RIP` points to `INT16 SysNtWriteVirtualMem` which will moved into RAX by the VEH) which will be handled by the VEH we have registered and the syscall will be made!
 
