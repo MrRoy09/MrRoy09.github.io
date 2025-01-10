@@ -53,7 +53,7 @@ while(dispatch){
     switch(dispatch)
     {
         case 1:
-          dispatch = 3;
+          dispatch = 2;
           break;
         case 2:
           if(x<10){
