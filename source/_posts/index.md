@@ -11,6 +11,7 @@ tags:
   - Obfuscation
 ---
 
+<style> .article-date { display: none; } </style> 
 # Control Flow Obfuscation using VEH
 
 Recently I came across an interesting malware analysis blog post that analyzed the GULoader malware.\

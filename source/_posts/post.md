@@ -11,6 +11,7 @@ tags:
     - Obfuscation
 ---
 
+<style> .article-date { display: none; } </style> 
 # Introduction
 I've been having fun coding a control flow flattening LLVM pass that obfuscates the control flow of a program. In this blog post, we will discuss control flow flattening, LLVM Passes and how LLVM passes can be used to automate control flow flattening. I also plan on covering other forms of obfuscations using LLVM passes in upcoming blog posts.
 # Some basics
