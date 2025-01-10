@@ -11,7 +11,7 @@ tags:
 # Introduction
 I've been having fun coding a control flow flattening LLVM pass that obfuscates the control flow of a program. In this blog post, we will discuss control flow flattening, LLVM Passes and how LLVM passes can be used to automate control flow flattening. I also plan on covering other forms of obfuscations using LLVM passes in upcoming blog posts.
 # Some basics
-Since this is a post on control flow flattening using LLVM passes, I recommend you  familiar with basics of LLVM and LLVM passes. [LLVM for Grad Students](https://www.cs.cornell.edu/~asampson/blog/llvm.html) is an excellent place to start. You can find more introductory LLVM blog posts in the References section.
+Since this is a post on control flow flattening using LLVM passes, I recommend you become familiar with basics of LLVM and LLVM passes. [LLVM for Grad Students](https://www.cs.cornell.edu/~asampson/blog/llvm.html) is an excellent place to start. You can find more introductory LLVM blog posts in the References section.
 
 In short, LLVM passes are used to analyse and transform IR from one form to another. Optimization passes are used to optimize the IR and make it more efficient. Analysis passes like `dot-cfg` are used to analyse the program. We can write custom passes to perform our own optimization/obfuscation/analysis and that is exactly what we are going to do. 
 
