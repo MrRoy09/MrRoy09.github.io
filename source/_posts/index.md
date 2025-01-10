@@ -1,9 +1,23 @@
 ---
 title: Control Flow Obfuscation using Vectored Exception Handling
-post_meta:
-    date: 29/12/2024
-    category: true
-    tag: true
+date: 29-12-2024 10:00:00
+post:
+  meta:
+    author:  # post author, first according to `author` in front-matter, then according to `author` in Hexo config
+      enable: false
+    date:  # post date, first according to `date` in front-matter, then according to date of md file
+      enable: true
+      format: "dddd, MMMM Do YYYY, h:mm a"  # format ISO-8601
+    wordcount:  # word count
+      enable: false
+      format: "{} words"  # placeholder
+    min2read:  # Time required to read
+      enable: false
+      format: "{} minute"
+    views:  # views count
+      enable: false
+      source: "leancloud"
+      format: "{} times"
 categories:
   - Reverse Engineering
 tags:
@@ -11,7 +25,6 @@ tags:
   - Obfuscation
 ---
 
-<style> .article-date { display: none; } </style> 
 # Control Flow Obfuscation using VEH
 
 Recently I came across an interesting malware analysis blog post that analyzed the GULoader malware.\

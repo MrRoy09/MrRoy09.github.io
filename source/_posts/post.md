@@ -1,9 +1,24 @@
 ---
 title: Control Flow Flattening using LLVM Pass
-post_meta:
-    date: 10/01/2025
-    category: true
-    tag: true
+date: 2025-01-10 10:00:00
+post:
+  meta:
+    author:  # post author, first according to `author` in front-matter, then according to `author` in Hexo config
+      enable: false
+    date:  # post date, first according to `date` in front-matter, then according to date of md file
+      enable: true
+      format: "dddd, MMMM Do YYYY, h:mm a"  # format ISO-8601
+    wordcount:  # word count
+      enable: false
+      format: "{} words"  # placeholder
+    min2read:  # Time required to read
+      enable: false
+      format: "{} minute"
+    views:  # views count
+      enable: false
+      source: "leancloud"
+      format: "{} times"
+
 categories: 
     - Compilers
 tags:
@@ -11,7 +26,6 @@ tags:
     - Obfuscation
 ---
 
-<style> .article-date { display: none; } </style> 
 # Introduction
 I've been having fun coding a control flow flattening LLVM pass that obfuscates the control flow of a program. In this blog post, we will discuss control flow flattening, LLVM Passes and how LLVM passes can be used to automate control flow flattening. I also plan on covering other forms of obfuscations using LLVM passes in upcoming blog posts.
 # Some basics
