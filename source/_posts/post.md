@@ -1,5 +1,9 @@
 ---
 title: Control Flow Flattening using LLVM Pass
+post_meta:
+    date: false
+    category: true
+    tag: true
 categories: 
     - Compilers
 tags:

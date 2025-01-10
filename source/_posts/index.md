@@ -1,5 +1,9 @@
 ---
 title: Control Flow Obfuscation using Vectored Exception Handling
+post_meta:
+    date: false
+    category: true
+    tag: true
 categories:
   - Reverse Engineering
 tags:
