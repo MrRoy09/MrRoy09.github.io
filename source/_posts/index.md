@@ -1,6 +1,6 @@
 ---
 title: Control Flow Obfuscation using Vectored Exception Handling
-date: 29-12-2024 10:00:00
+date: 2024-29-10 10:00:00
 categories:
   - Reverse Engineering
 tags:
