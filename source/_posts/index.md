@@ -1,7 +1,7 @@
 ---
 title: Control Flow Obfuscation using Vectored Exception Handling
 post_meta:
-    date: false
+    date: 29/12/2024
     category: true
     tag: true
 categories:

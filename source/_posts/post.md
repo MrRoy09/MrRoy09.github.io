@@ -1,7 +1,7 @@
 ---
 title: Control Flow Flattening using LLVM Pass
 post_meta:
-    date: false
+    date: 10/01/2025
     category: true
     tag: true
 categories: 
