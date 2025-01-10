@@ -252,7 +252,7 @@ BasicBlock *newconditionalBlock = conditionalBlock->splitBasicBlockBefore(load);
 Lets take a look at what we have done here
 ![Obfuscated CFG](/img/flatten/demo2_o.png) Looks good! The default is jumping to the false block i.e `printf("bye")`
 
-Although we don't have any loops in our example, but if we did, we would notice that the loops are still pointing back to Block 6. This would cause the `StoreInst` to store `1` in the dispatch variable and hence only `case:1` will be executed. We need to update the `predecessors` of Block 6 to instead point to Block 7.
+Although we don't have any loops in our example, but if we did, we would notice that the loops are still pointing back to Block 6. This would cause the `StoreInst` to store `1` in the dispatch variable and hence only `case:1` will be executed. We need to update the `predecessors` of Block 6 to instead point to Block 8.
 
 ```cpp
 for (auto *pred : predecessors(newconditionalBlock))
