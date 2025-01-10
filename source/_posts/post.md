@@ -303,7 +303,7 @@ switchI->addCase(ConstantInt::get(F.getContext(), APInt(32, 3)), switch_case_3);
 
 The final result looks like this 
 ![Obfuscated cfg](/img/flatten/demo4_o.png)
-That's it! We have implemented a simple control flow flattening algorithm using an LLVM pass. 
+That's it! We have implemented a simple control flow flattening algorithm using a LLVM pass. 
 
 # Results
 Let us obfuscate and decompile some simple programs using `Ida` and see how they look like
