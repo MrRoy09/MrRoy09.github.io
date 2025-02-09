@@ -333,6 +333,8 @@ We have seen that by leveraging the mathematics of complete lattice, monotonic f
 
 Optimizations like dead-code elimination (removing unused code), constant propagation (replacing expressions with constant values), loop unrolling, all depend on the soundness of dataflow analysis. On the security front, dataflow analysis can be used to automate the detection of bugs like buffer overflows, integer overflow/underflow, command injections, etc.
 
+PS: This was a summary of all that I have learnt about dataflow analysis. If you happen to spot a mistake, please reach out to me via [X](https://x.com/21verses). Thanks a lot for reading!!
+
 # References
 
 **Books**
