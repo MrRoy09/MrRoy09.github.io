@@ -189,6 +189,8 @@ Other techniques for dealing with infinite lattices include widening-narrowing, 
 
 To complete our formalization, the family of transfer function (each block can have its own transfer function) selected must satisfy the following constraints in addition to being monotonic.
 
+Identity function must be present.
+
 $$
    I(x) = x \in \mathcal{F}
 $$
@@ -200,7 +202,7 @@ $$
 If each block has its own transfer function, the resulting transfer function can be composed as
 
 $$
-F(x) = f1 \circ f2 \circ f3 \circ f4 ......
+F(x) = f_1 \circ f_2 \circ f_3 \circ f_4 ......
 $$
 
 # Reaching definitions
@@ -215,7 +217,7 @@ A quick example just so we are clear
 P1 : x = 3
 P2 : x = 20
 P3:  y = 10
-P3 : z = x + y // {(x,P2),(y,P3)} reaches here, (x,P1) does not
+P4 : z = x + y // {(x,P2),(y,P3)} reaches here, (x,P1) does not
 ```
 
 First step is to define the domain of values.
@@ -247,19 +249,12 @@ f(S) = (S \setminus \text{kill}) \cup \text{gen}
 $$
 
 $$
-where:
-$$
-
-$$
-\texttt{S is the set of reaching definitions for the block.}
-$$
-
-$$
-\texttt{kill is the set of definitions that are overwritten by block.}
-$$
-
-$$
-\texttt{gen is the set of new definitions introduced by the block.}
+\begin{aligned}
+where \\
+S &\quad \text{is set of reaching definitions for block,} \\
+\texttt{kill} &\quad \text{is set of definitions that is overwritten by block,} \\
+\texttt{gen} &\quad \text{is set of new definitions introduced by block.}
+\end{aligned}
 $$
 
 We remove all the definitions that are being redefined/invalidated in block B, and add all the new definitions introduced in block B to the set of definitions that is reaching the block B.
