@@ -215,6 +215,8 @@ It should be noted that in my challenge, the shellcode needed to Reside in a pag
 
 # References
 
-https://www.elastic.co/security-labs/getting-gooey-with-guloader-downloader
-https://redops.at/en/blog/syscalls-via-vectored-exception-handling
+[getting goeey with guloader downloader by elastic.co](https://www.elastic.co/security-labs/getting-gooey-with-guloader-downloader)
+
+[syscalls-via-vectored-exception-handling by redops](https://redops.at/en/blog/syscalls-via-vectored-exception-handling)
+
 https://github.com/MrRoy09/VEH_Control_Flow
