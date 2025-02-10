@@ -151,7 +151,7 @@ In our example of tracking possible variable value, the Join Operator is simply 
 
 # Fixed point and the Knaster–Tarski theorem
 
-We are now ready to formalize dataflow analysis problems. To recap, we first decide on the domain of our values, depending on the problem at hand. Then, we construct a complete lattice LL and define a partial ordering (and, consequently, a join operator and a meet operator). Then, we define a transfer function f:
+We are now ready to formalize dataflow analysis problems. To recap, we first decide on the domain of our values, depending on the problem at hand. Then, we construct a complete lattice L and define a partial ordering (and, consequently, a join operator and a meet operator). Then, we define a transfer function f:
 
 $$
 f: L \to L
