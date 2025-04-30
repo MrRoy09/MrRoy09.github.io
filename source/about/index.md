@@ -3,6 +3,5 @@ title: This is a title
 layout: about
 ---
 
-Documenting my explorations of `Compilers`, `Reverse Engineering`, `Windows Internals` and `Hardware Hacking`
+Documenting my explorations of `Compilers`, `Reverse Engineering`, `Hardware Development` and more.
 
-You may stumble upon an occasional post exploring the Philosophy of Mind, Language and Morality.
