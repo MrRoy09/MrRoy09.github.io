@@ -260,7 +260,7 @@ void disassemble_symbols(ELFFile &elfFile, std::vector<Symbol> &symbols)
 
 `exportCFGToDOT` is just a helper function that converts the recovered CFG into a convenient DOT format. We will discuss it later. The most important function is `disassemble_function_recursive`. Here is how it works. 
 
-We start from the function entry point and disassemble all instructions that are executed in sequence. This constitutes one block, which ends whenever we encounter a instruction that transfers or alter control flow like `call`, `ret`, `jmp` etc. The target of the control flow transfer is added as a successor of this block and it's address is stored to be disassembled in further iterations. Hence, everytime we disassemble block, we also add its successor/successors as a target for further disassembly. This ensures we only disassemble valid and reachable code. 
+We start from the function entry point and disassemble all instructions that are executed in sequence. This constitutes one block, which ends whenever we encounter a instruction that transfers or alter control flow like `call`, `ret`, `jmp` etc. The target of the control flow transfer is added as a successor of this block and it's address is stored to be disassembled in further iterations. Hence, everytime we disassemble block, we also add its successor/successors as a target for further disassembly. This ensures we only disassemble valid and reachable code. This is the essence of the recursive traversal disassembly.
 
 Before disassembling a block from a given address, we must check two important conditions:
 
