@@ -273,7 +273,7 @@ The address may have already been disassembled as part of a previously visited b
 The address might fall within the middle of an already disassembled block (let’s call it Block A). Since every address we consider is a potential control flow target, this suggests that execution might enter Block A at this point — even though it's not the original entry of that block. This is problematic, as a well-formed basic block must have only one entry point. To resolve this, we must split Block A at the given address into two separate blocks: one ending just before the address, and the other starting from it.
 
 
-# Algorithm 
+# The Algorithm 
 
 In other words, we maintain two sets:
 
@@ -335,7 +335,7 @@ This is how the CFG looks without the split block logic
 Notice how there is an abrupt jump to `0x11f9` which is the second instruction of block `0x11f2`. This means control flow is entering block in the middle. Hence to correct this, we must create a new block starting from `0x11f9`.
 
 
-# Implementation
+# The Implementation
 
 ```cpp
 void disassemble_function_recursive(csh handle, ELFFile &elfFile, Function &function, uint64_t start_address)
