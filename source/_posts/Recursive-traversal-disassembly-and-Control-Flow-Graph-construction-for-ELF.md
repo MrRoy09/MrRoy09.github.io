@@ -258,9 +258,24 @@ void disassemble_symbols(ELFFile &elfFile, std::vector<Symbol> &symbols)
 }
 ```
 
-`exportCFGToDOT` is just a helper function that converts the recovered CFG into a convenient DOT format. We will discuss it later. The most important function is `disassemble_function_recursive`. Here is how it works.
+`exportCFGToDOT` is just a helper function that converts the recovered CFG into a convenient DOT format. We will discuss it later. The most important function is `disassemble_function_recursive`. Here is how it works. 
 
-It maintains two sets:
+We start from the function entry point and disassemble all instructions that are executed in sequence. This constitutes one block, which ends whenever we encounter a instruction that transfers or alter control flow like `call`, `ret`, `jmp` etc. The target of the control flow transfer is added as a successor of this block and it's address is stored to be disassembled in further iterations. Hence, everytime we disassemble block, we also add its successor/successors as a target for further disassembly. This ensures we only disassemble valid and reachable code. 
+
+Before disassembling a block from a given address, we must check two important conditions:
+
+1    **Previously Disassembled**:
+
+The address may have already been disassembled as part of a previously visited block. In that case, we can safely skip it to avoid redundant work.
+
+2   **Address Lies Inside an Existing Block**:
+
+The address might fall within the middle of an already disassembled block (let’s call it Block A). Since every address we consider is a potential control flow target, this suggests that execution might enter Block A at this point — even though it's not the original entry of that block. This is problematic, as a well-formed basic block must have only one entry point. To resolve this, we must split Block A at the given address into two separate blocks: one ending just before the address, and the other starting from it.
+
+
+# Algorithm 
+
+In other words, we maintain two sets:
 
 `pending_addresses`: A worklist of addresses yet to be processed
 `processed_block_starts`: Addresses already examined to avoid reprocessing
@@ -682,7 +697,12 @@ int main(){
 ```
 ![Control flow graph of main function](/img/CFG_recovery/main2.png)
 
-The accompanying code for this blog post can be found here <a href="https://github.com/MrRoy09/CFGTracer"> Github Repo For Project</a> 
+# Conclusion
+In this blog post, we explored how to construct the Control Flow Graph (CFG) of a program using Recursive Traversal disassembly. CFGs are powerful tools for understanding program execution and analyzing how control moves between different parts of a program.
+
+I hope you found this post insightful and informative. Feel free to reach out to me on [X](https://x.com/21verses) with any comments or feedback.
+
+You can find the accompanying source code for this post on my [GitHub repository](https://github.com/MrRoy09/CFGTracer).
 
 
 
