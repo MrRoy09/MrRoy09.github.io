@@ -194,10 +194,16 @@ We define the following structs for convenience
 struct Instruction
 {
     uint64_t address;
+    uint8_t size;
     std::string mnemonic;
     std::string op_str;
     cs_detail *details;
     uint32_t id;
+
+    ~Instruction()
+    {
+        delete details;
+    }
 };
 
 struct Block
@@ -531,7 +537,16 @@ Block disassemble_block(csh handle, ELFFile &elfFile, uint64_t start_address)
         instr.address = insn[0].address;
         instr.mnemonic = insn[0].mnemonic;
         instr.op_str = insn[0].op_str;
-        instr.details = insn[0].detail;
+        if (insn[0].detail)
+        {
+            cs_detail *detail_copy = new cs_detail;
+            memcpy(detail_copy, insn[0].detail, sizeof(cs_detail));
+            instr.details = detail_copy;
+        }
+        else
+        {
+            instr.details = nullptr;
+        }
         instr.id = insn[0].id;
 
         // Add the instruction to the block
