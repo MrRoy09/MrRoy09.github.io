@@ -197,13 +197,13 @@ struct Instruction
     uint8_t size;
     std::string mnemonic;
     std::string op_str;
-    cs_detail *details;
     uint32_t id;
 
-    ~Instruction()
-    {
-        delete details;
-    }
+    uint8_t groups[8];
+    uint8_t groups_count = 0;
+
+    cs_x86_op operands[8];
+    uint8_t op_count = 0;
 };
 
 struct Block
@@ -511,86 +511,72 @@ Block disassemble_block(csh handle, ELFFile &elfFile, uint64_t start_address)
     uint64_t current_offset = start_address;
     cs_insn *insn = nullptr;
 
-    // Begin disassembling instructions one at a time
     while (true)
     {
-        // Disassemble a single instruction at current_offset
         size_t count = cs_disasm(handle, elfFile.data.data() + current_offset,
                                  elfFile.data.size() - current_offset, current_offset, 1, &insn);
 
-        // If disassembly fails, exit the block
         if (count == 0)
         {
             std::cerr << "Disassembly error at: 0x" << std::hex << current_offset << std::endl;
-
-            // Set block end if we already have some valid instructions
             if (!block.instructions.empty())
             {
                 block.end_address = current_offset;
             }
-
             return block;
         }
 
-        // Populate custom Instruction structure with disassembled data
         Instruction instr;
         instr.address = insn[0].address;
+        instr.size = insn[0].size;
         instr.mnemonic = insn[0].mnemonic;
         instr.op_str = insn[0].op_str;
-        if (insn[0].detail)
-        {
-            cs_detail *detail_copy = new cs_detail;
-            memcpy(detail_copy, insn[0].detail, sizeof(cs_detail));
-            instr.details = detail_copy;
-        }
-        else
-        {
-            instr.details = nullptr;
-        }
         instr.id = insn[0].id;
 
-        // Add the instruction to the block
+        if (insn[0].detail)
+        {
+            instr.groups_count = insn[0].detail->groups_count;
+            memcpy(instr.groups, insn[0].detail->groups, sizeof(instr.groups));
+
+            instr.op_count = insn[0].detail->x86.op_count;
+            memcpy(instr.operands, insn[0].detail->x86.operands, sizeof(cs_x86_op) * instr.op_count);
+        }
+
         block.instructions.push_back(instr);
 
-        // Calculate address of the next instruction
         uint64_t next_address = current_offset + insn[0].size;
 
         bool is_control_flow = false;
-
-        // Check if instruction is a control flow instruction (jump, call, ret, etc.)
-        if (instr.details && instr.details->groups_count > 0)
+        if (instr.groups_count > 0)
         {
-            for (int i = 0; i < instr.details->groups_count; ++i)
+            for (int i = 0; i < instr.groups_count; ++i)
             {
-                uint8_t group = instr.details->groups[i];
-
-                if (group == CS_GRP_JUMP || group == CS_GRP_CALL || group == CS_GRP_RET ||
-                    group == CS_GRP_INT || instr.mnemonic == "hlt")
+                uint8_t group = instr.groups[i];
+                if (group == CS_GRP_JUMP || group == CS_GRP_CALL || group == CS_GRP_RET || group == CS_GRP_INT || instr.mnemonic == "hlt")
                 {
                     is_control_flow = true;
-                    // Conditional jump: e.g., je, jne, etc.
-                    if (group == CS_GRP_JUMP && instr.details->x86.op_count > 0)
+
+                    if (group == CS_GRP_JUMP && instr.op_count > 0)
                     {
-                        cs_x86_op op = instr.details->x86.operands[0];
+                        cs_x86_op op = instr.operands[0];
                         if (op.type == X86_OP_IMM)
                         {
-                            block.successors.insert(op.imm);        // jump taken
-                            block.successors.insert(next_address);  // fall-through
+                            if (instr.mnemonic == "jmp")
+                            {
+                                block.successors.insert(op.imm);
+                            }
+                            else
+                            {
+                                block.successors.insert(op.imm);
+                                block.successors.insert(next_address);
+                            }
                         }
                     }
-                    // Calls: assume control continues to next instruction after the call
-                    else if (group == CS_GRP_CALL && instr.details->x86.op_count > 0)
+                    else if (group == CS_GRP_CALL)
                     {
-                        block.successors.insert(next_address); // we assume function returns and execution continues from next instruction onwards
-                        is_control_flow = true;
+                        block.successors.insert(next_address);
                     }
-                    // Returns: mark block as ending a function
-                    else if (group == CS_GRP_RET)
-                    {
-                        block.isReturn = true;
-                    }
-                    // Halt: also ends execution
-                    else if (instr.mnemonic == "hlt")
+                    else if (group == CS_GRP_RET || instr.mnemonic == "hlt")
                     {
                         block.isReturn = true;
                     }
@@ -598,7 +584,6 @@ Block disassemble_block(csh handle, ELFFile &elfFile, uint64_t start_address)
             }
         }
 
-        // If the current instruction ends control flow, finalize and return the block
         if (is_control_flow)
         {
             block.end_address = next_address;
@@ -606,7 +591,6 @@ Block disassemble_block(csh handle, ELFFile &elfFile, uint64_t start_address)
             return block;
         }
 
-        // Continue to next instruction in the block
         current_offset = next_address;
         cs_free(insn, count);
     }
