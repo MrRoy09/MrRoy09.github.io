@@ -2,7 +2,7 @@
 title: CFG Construction via Recursive Disassembly of ELF Binaries
 date: 2025-04-30 05:59:37
 category: Reverse Engineering
-hide: true
+hide: false
 tags:
 - Disassembler
 - Control flow graph
@@ -12,13 +12,9 @@ tags:
 In this post, we will discuss ELF binaries, Disassembly algorithms and Control flow graph construction. We will create a simple program that can produce the control flow graph of an ELF binary using recursive traversal disassembly.
 
 # A Brief Introduction to Disassembly Algorithms
-When given a series of bytes, the simplest method for disassembling them is to process one instruction at a time, moving sequentially through the code. This method is called linear disassembly. However, it comes with a significant flaw: it assumes that all valid instructions are arranged in a strict sequence. In reality, there’s no clear distinction between code and data within the executable section. As a result, data can be interspersed between instructions.
+When given a series of byets, the simplest disassembly method is linear disassembly, which processes one instruction after another. However, it assumes all bytes in the executable section are code, ignoring the fact that data may be interspersed. This can lead to misinterpreting data as code and producing incorrect results.
 
-This lack of separation can lead linear disassembly to misinterpret data bytes as code, causing incorrect or incomplete disassembly results. So, how do we overcome this limitation? The answer lies in using recursive traversal for disassembly.
-
-We begin with a known valid instruction—usually the entry point of the binary—and focus on disassembling only those instructions that we are certain will be executed. This allows us to follow the actual control flow of the program, bypassing data or unused instructions. For example, when we encounter an instruction like an unconditional jump (jmp), instead of continuing sequentially, we resume disassembly from the target of the jump. This is because we know with certainty that when the processor encounters the jmp, it will execute the target address (hence the target address must be valid code).
-
-Here is a simple example that will illustrate the difference between linear and recursive traversal disassembly.
+To address this, we use recursive traversal. Starting from a known valid instruction (e.g., the program entry point), we follow only instructions that are actually reachable during execution. When a jump (e.g., jmp) is encountered, recursive disassembly follows the jump target rather than continuing linearly, ensuring that only valid control paths are analyzed.
 
 ``` asm
 _start:
