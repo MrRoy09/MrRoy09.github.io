@@ -12,7 +12,7 @@ tags:
 In this post, we will discuss ELF binaries, Disassembly algorithms and Control flow graph construction. We will create a simple program that can produce the control flow graph of an ELF binary using recursive traversal disassembly.
 
 # A Brief Introduction to Disassembly Algorithms
-When given a series of byets, the simplest disassembly method is linear disassembly, which processes one instruction after another. However, it assumes all bytes in the executable section are code, ignoring the fact that data may be interspersed. This can lead to misinterpreting data as code and producing incorrect results.
+When given a series of bytes, the simplest disassembly method is linear disassembly, which processes one instruction after another. However, it assumes all bytes in the executable section are code, ignoring the fact that data may be interspersed. This can lead to misinterpreting data as code and producing incorrect results.
 
 To address this, we use recursive traversal. Starting from a known valid instruction (e.g., the program entry point), we follow only instructions that are actually reachable during execution. When a jump (e.g., jmp) is encountered, recursive disassembly follows the jump target rather than continuing linearly, ensuring that only valid control paths are analyzed.
 
