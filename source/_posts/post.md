@@ -1,6 +1,6 @@
 ---
 title: Control Flow Flattening using LLVM Pass
-date: 2025-01-10 10:00:00
+date: 2025-01-10
 categories:
   - Compilers
 tags:
