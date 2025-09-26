@@ -1,7 +1,11 @@
 ---
 title: Gentle Introduction to Homomorphic Encryption and CKKS
-date: 2025-09-22 7:00:00
+date: 2025-09-26 7:00:00
 category: Cryptography
+tags:
+- Cryptography
+- CKKS
+- Homomorphic Encryption
 math: true
 ---
 
