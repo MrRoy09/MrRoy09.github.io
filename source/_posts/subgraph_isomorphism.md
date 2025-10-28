@@ -235,10 +235,20 @@ Each node in this state space represents a partial injective mapping between pat
 - Build candidate targets $v$ from $T^{G}$, else any $v \in V(G) \setminus \mathrm{mapped}_G$.
 - This focuses the search near the current boundary and reduces branching.
 
+### Feasibility Checks
+Before adding a candidate pair $(u, v)$ to the mapping, VF2 performs feasibility checks to prune the search. A pair is feasible only if it satisfies these rules:
+
+1.  **Edge Consistency**: For every already mapped neighbor $u'$ of $u$, its corresponding vertex $v'$ in $G$ must be a neighbor of $v$. This ensures the local graph structure is preserved.
+
+2.  **Look-Ahead Pruning**: The algorithm checks the number of neighbors of $u$ and $v$ that are in their respective "frontier" sets. The count for $v$ must be at least as large as for $u$. This prunes branches where the target graph lacks enough nodes to match the pattern's structure.
+
+If a pair fails these checks, the algorithm backtracks, avoiding a fruitless search path.
+
 ### Update and backtrack
 - On accepting a feasible pair $(u,v)$:
   - Set $\mathrm{core}_P(u)=v$ and $\mathrm{core}_G(v)=u$.
-  - Move $u$ and $v$ out of frontier sets; insert their previously unseen neighbors into $T^{P}$ and $T^{G}$, respectively.
+
+- Move $u$ and $v$ out of frontier sets; insert their previously unseen neighbors into $T^{P}$ and $T^{G}$, respectively.
 - On failure, we simply need to backtrack to the previous state and restore the frontier sets (and any other state information). This is more efficient than restoring the entire matrix as in Ullmann's algorithm.
 
 However, state management necessitates the use of multiple auxiliary data structures to maintain highly localized information about the search frontier. This increases the structural complexity compared to Ullmann's single matrix representation. But we are able to avoid matrix copying at every step of recursion. We are also able to perform better pruning at each stage due to these localized search frontier sets.
