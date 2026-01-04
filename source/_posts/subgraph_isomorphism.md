@@ -1,8 +1,9 @@
 ---
 title: Subgraph Isomorphism
 date: 2025-10-29
-category: Graph Theory
-hide: false
+category: 
+- Explorations
+hide: true
 math: true
 ---
 

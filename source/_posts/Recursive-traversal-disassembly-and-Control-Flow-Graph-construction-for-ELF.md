@@ -1,7 +1,7 @@
 ---
 title: CFG Construction via Recursive Disassembly of ELF Binaries
 date: 2025-04-30
-category: Reverse Engineering
+category: Compilers
 hide: false
 tags:
 - Disassembler

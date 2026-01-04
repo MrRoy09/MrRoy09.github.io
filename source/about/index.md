@@ -1,6 +1,10 @@
 ---
-title: This is a title
+title: About
 layout: about
 ---
 
-I'm an undergrad student and I write here occasionally about what I’m building, breaking, or learning. Hope you find something interesting and useful along the way.
+I am an undergraduate at IIT Roorkee studying compiler backends and hardware design, with a focus on GPU architecture, FPGA-based systems, and LLVM backends for heterogeneous computing.
+
+## Contact
+
+Feel free to reach out for discussions at: **royketan09@gmail.com**

@@ -2,10 +2,11 @@
 title: Control Flow Obfuscation using Vectored Exception Handling
 date: 2024-12-29
 categories:
-  - Reverse Engineering
+  - Explorations
 tags:
   - Malware
   - Obfuscation
+hide: true
 ---
 
 # Control Flow Obfuscation using VEH
