@@ -1,5 +1,8 @@
 {
     "cSpell.words": [
         "decompiling"
-    ]
+    ],
+    "files.watcherExclude": {
+        "**/target": true
+    }
 }
