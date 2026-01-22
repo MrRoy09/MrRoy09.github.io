@@ -43,7 +43,7 @@ One Vector L1 cache is present per compute unit. However, one Instruction L1 cac
 
 The L1 cache is designed as a write-through cache. This choice simplifies the hardware by eliminating the need for per-line dirty state, ownership tracking, or participation in coherence protocols with other Compute Units.
 
-L1 caches are non-coherent, meaning that different compute units may hold independent and potentially stale copies of the same cache line. This is an important point because it affects memory synchronization between wavefronts (warps in NVIDIA's terminology) executing on different Compute Units. There is also a **Write-Buffer** which is part of the L1 cache. The primary purpose of the write-buffer is to coalesce memory accesses to minimize the number of L1 cache accesses and write-throughs to L2 performed.
+L1 caches are non-coherent, meaning that different compute units may hold independent and potentially stale copies of the same cache line. This is an important point because it affects memory synchronization between wavefronts (warps in NVIDIA's terminology) executing on different Compute Units. There is also a **TA Unit** which is part of the L1 cache. The primary purpose of the TA unit is to coalesce memory accesses to minimize the number of L1 cache accesses and write-throughs to L2 performed.
 
 L2 cache (4 MB) is designed to be the point of coherency. It is a write-back and write-allocate cache that serves an entire XCD. The L2 is coherent within an XCD and Coherence among L2 caches of different XCDs is maintained with the help of snoop filters present in the data fabric. Global Memory Atomic operations execute directly in the L2 cache (bypassing L1 cache entirely)
 
@@ -235,7 +235,7 @@ Because LDS is local to a compute unit, completion of LDS operations implies imm
 
 
 ### Ordering Guarantees
-Memory instructions of the same type issued by a single wavefront are guaranteed to complete in program order. For example, if a wavefront issues two vector memory load instructions, the data will be written back to the destination VGPRs in the order in which the loads were issued.
+Memory instructions of the same type issued by a single wavefront are guaranteed to complete in program order (note that this is not true for scalar memory reads). For example, if a wavefront issues two vector memory load instructions, the data will be written back to the destination VGPRs in the order in which the loads were issued.
 
 However, no such ordering guarantee exists between memory instructions of different types. A wavefront issuing a vector memory load followed by a shared memory (LDS) load may observe the LDS load completing first, as the two operations are handled by different execution pipelines and tracked by independent hardware counters. Similarly, no ordering guarantees are provided across different wavefronts. If wavefront A issues a global memory load before wavefront B, the architecture does not guarantee that wavefront A will receive its data first.
 
@@ -246,7 +246,7 @@ For example, if a wavefront issues five vector memory operations, VM_CNT will be
 
  `s_waitcnt vmcnt(3)`
 
-causes the wavefront to stall until VM_CNT drops to three, indicating that first two of the issued vector memory operations have completed and written their results to the VGPRs. Similarly, s_waitcnt lgkmcnt(3) waits until only three scalar or LDS operations remain outstanding.
+causes the wavefront to stall until VM_CNT drops to three, indicating that first two of the issued vector memory operations have completed and written their results to the VGPRs. Similarly, s_waitcnt lgkmcnt(3) waits until only LDS operations remain outstanding (assuming no scalar memory instructions were issued)
 
 For memory writes, waiting for the counter value allows guaranteed visibility across the entire XCD because the counter is only decremented when the write has reached L2 cache. However, **it does not** guarantee visibility across the entire GPU/System. For that, we will need to perform a writeback from L2.
 
@@ -301,14 +301,13 @@ We have seen that maintaining coherence at the L2 level requires the compiler to
 >
 > To ensure coherence of local memory reads across compute units belonging to different agents, a buffer_inv sc0 sc1 instruction is required. In multi-L2 configurations, this instruction invalidates non-local L2 cache lines.
 
+**The following interpretation is based on code comments in the LLVM AMDGPU back end. As I could not find explicit confirmation of this behavior in the publicly available CDNA manuals, please treat them as informed speculations**
 
-Here, local memory refers to memory addresses that are part of the HBM stack directly attached to a given XCD. The CDNA-3 architecture consists of eight XCDs distributed across four I/O dies, with a total of eight HBM stacks attached to these I/O dies. Effectively, each XCD is associated with one HBM stack, and memory addresses belonging to the HBM attached to an XCD are classified as local memory for that XCD.
+Local memory here refers to memory addresses that are part of the HBM stack directly attached to a given XCD. The CDNA-3 architecture consists of eight XCDs distributed across four I/O dies, with a total of eight HBM stacks attached to these I/O dies. Effectively, each XCD is associated with one HBM stack, and memory addresses belonging to the HBM attached to an XCD are classified as local memory for that XCD.
 
 From this, we can infer the following behavior: if XCD 7 writes to a memory address that is local to XCD 0, and that address is currently cached in the L2 of XCD 0, the snoop filters will automatically invalidate the corresponding L2 cache line in XCD 0. As a result, any subsequent access by XCD 0 to that address will bypass its L2 cache and fetch the data from the memory side (Infinity Cache or DRAM), ensuring visibility of the value written by XCD 7.
 
 The buffer_inv instructions invalidate only non-local cache lines, as invalidation of cache lines corresponding to local memory is handled automatically by hardware probes triggered through the coherence fabric.
-
-Documentation describing the internal implementation of these snoop filters is limited. It is therefore unclear whether snoop filters also trigger writeback of dirty local L2 cache lines when another XCD attempts to read the corresponding address. While such behavior would be consistent with coherent cache operation, this remains speculative.
 
 # Conclusion
 
