@@ -303,9 +303,7 @@ We have seen that maintaining coherence at the L2 level requires the compiler to
 
 **The following interpretation is based on code comments in the LLVM AMDGPU back end. As I could not find explicit confirmation of this behavior in the publicly available CDNA manuals, please treat them as informed speculations**
 
-Local memory here refers to memory addresses that are part of the HBM stack directly attached to a given XCD. The CDNA-3 architecture consists of eight XCDs distributed across four I/O dies, with a total of eight HBM stacks attached to these I/O dies. Effectively, each XCD is associated with one HBM stack, and memory addresses belonging to the HBM attached to an XCD are classified as local memory for that XCD.
-
-From this, we can infer the following behavior: if XCD 7 writes to a memory address that is local to XCD 0, and that address is currently cached in the L2 of XCD 0, the snoop filters will automatically invalidate the corresponding L2 cache line in XCD 0. As a result, any subsequent access by XCD 0 to that address will bypass its L2 cache and fetch the data from the memory side (Infinity Cache or DRAM), ensuring visibility of the value written by XCD 7.
+Local memory here refers to memory addresses that is part of the GPU partition. The CDNA-3 architecture consists of eight XCDs distributed across four I/O dies, with a total of eight HBM stacks attached to these I/O dies. Effectively, the entire GPU can be partitoned into 1/2/4/8 GPUs with 8/4/2/1 XCDs per GPU.
 
 The buffer_inv instructions invalidate only non-local cache lines, as invalidation of cache lines corresponding to local memory is handled automatically by hardware probes triggered through the coherence fabric.
 
